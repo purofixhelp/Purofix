@@ -1,0 +1,7 @@
+*.bak
+*.pre-mockup
+.DS_Store
+.netlify
+.env
+.env.*
+node_modules/

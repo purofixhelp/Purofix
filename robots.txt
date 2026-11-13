@@ -1,0 +1,25 @@
+User-agent: *
+Allow: /
+Disallow: /purofix-admin.html
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /purofix-admin.html
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /purofix-admin.html
+
+User-agent: GPTBot
+Allow: /
+Disallow: /purofix-admin.html
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /purofix-admin.html
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /purofix-admin.html
+
+Sitemap: https://purofix.com/sitemap.xml

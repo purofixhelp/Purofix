@@ -1,0 +1,27 @@
+{
+  "id": "/purofix-admin.html",
+  "name": "Purofix Ops Admin & CRM",
+  "short_name": "Purofix Admin",
+  "description": "Private Purofix Lucknow CRM, Customer Ledger, Payments, 90-Day Reminders & SEO Control Portal.",
+  "start_url": "/purofix-admin.html",
+  "scope": "/",
+  "display": "standalone",
+  "prefer_related_applications": false,
+  "background_color": "#091024",
+  "theme_color": "#091024",
+  "lang": "en-IN",
+  "icons": [
+    {
+      "src": "/assets/admin-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/admin-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+*.bak
+*.pre-mockup
+cloud-sync-apps-script.gs
+README.md
+.DS_Store
+.netlify
+.git
+.gitignore

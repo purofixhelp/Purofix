@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="pfDrop" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="55%" stop-color="#0a2b56" />
+      <stop offset="100%" stop-color="#00a69c" />
+    </linearGradient>
+    <linearGradient id="pfTeal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4" />
+      <stop offset="100%" stop-color="#00a69c" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="#ffffff" />
+  <path d="M32 7 C23 19 13 30 13 40 C13 50.5 21.5 57 32 57 C42.5 57 51 50.5 51 40 C51 30 41 19 32 7 Z" fill="url(#pfDrop)" />
+  <path d="M22 54 C30 44 43 44 49 32 C50.5 35 51 37.5 51 40 C51 50.5 42.5 57 32 57 C28.2 57 24.8 55.9 22 54 Z" fill="url(#pfTeal)" />
+  <g transform="translate(31 35) rotate(-45)">
+    <rect x="-12" y="-3" width="16" height="6" rx="3" fill="#ffffff" />
+    <path d="M4 -6 A6.5 6.5 0 1 1 4 6 L9 2 L9 -2 Z" fill="#ffffff" />
+  </g>
+</svg>
