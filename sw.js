@@ -1,4 +1,4 @@
-const CACHE_NAME = 'purofix-pwa-v7';
+const CACHE_NAME = 'purofix-pwa-v8';
 const PRECACHE_URLS = [
   '/',
   '/index.html',

@@ -130,6 +130,170 @@
     }
   } catch (e) {}
 
+  // Production Supabase Cloud Integration (purofix-lucknow in Mumbai ap-south-1)
+  const SUPABASE_CONFIG = {
+    url: 'https://fhyhktccdhhxpwmpkzqh.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoeWhrdGNjZGhoeHB3bXBrenFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ1NTgzMzgsImV4cCI6MjExMDEzNDMzOH0.ELTfodDk6adkcrpxMhxuPjKsNOE2r0Mf7DPXp-CvnrE'
+  };
+
+  async function pushLeadToSupabase(lead) {
+    if (!SUPABASE_CONFIG.url || !SUPABASE_CONFIG.anonKey || typeof fetch !== 'function') return false;
+    try {
+      const row = {
+        id: lead.id,
+        name: lead.name || 'Customer',
+        phone: lead.phone || '',
+        service_type: lead.serviceType || 'RO Service',
+        issue: lead.notes || '',
+        pincode: (lead.address || '').match(/\b\d{6}\b/)?.[0] || '',
+        locality: lead.locality || 'Lucknow',
+        address: lead.address || '',
+        preferred_time: lead.preferredTime || 'Within 30 Mins',
+        tds_reading: lead.tdsBefore || '',
+        status: lead.status || 'New Lead',
+        source: lead.leadSource || 'Website Booking',
+        notes: lead.notes || '',
+        assigned_to: lead.technician || 'Ashwani Tiwari',
+        price: '₹' + (lead.revenue || 199),
+        revenue: lead.revenue || 199,
+        brand: lead.brand || '',
+        payload: lead
+      };
+      const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/leads`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_CONFIG.anonKey,
+          'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'resolution=merge-duplicates'
+        },
+        body: JSON.stringify(row)
+      });
+      return res.ok;
+    } catch (e) {
+      console.warn('Supabase lead push warning:', e);
+      return false;
+    }
+  }
+
+  async function pushReviewToSupabase(review) {
+    if (!SUPABASE_CONFIG.url || !SUPABASE_CONFIG.anonKey || typeof fetch !== 'function') return false;
+    try {
+      const row = {
+        id: review.id,
+        author: review.name || 'Lucknow Resident',
+        rating: review.rating || 5,
+        locality: review.locality || 'Lucknow',
+        review_text: review.text || '',
+        service_used: review.serviceTag || 'RO Service',
+        verified: true,
+        source: review.source || 'Customer Submitted',
+        payload: review
+      };
+      const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/reviews`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_CONFIG.anonKey,
+          'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'resolution=merge-duplicates'
+        },
+        body: JSON.stringify(row)
+      });
+      return res.ok;
+    } catch (e) {
+      console.warn('Supabase review push warning:', e);
+      return false;
+    }
+  }
+
+  async function syncFromSupabase() {
+    if (!SUPABASE_CONFIG.url || !SUPABASE_CONFIG.anonKey || typeof fetch !== 'function') return false;
+    try {
+      const leadsRes = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/leads?order=created_at.desc&limit=200`, {
+        headers: {
+          'apikey': SUPABASE_CONFIG.anonKey,
+          'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
+        }
+      });
+      if (leadsRes.ok) {
+        const rows = await leadsRes.json();
+        if (Array.isArray(rows) && rows.length > 0) {
+          const currentLeads = getLeads();
+          const currentMap = new Map(currentLeads.map(l => [l.id, l]));
+          let updated = false;
+          rows.forEach(r => {
+            if (!currentMap.has(r.id)) {
+              const reconstructed = (r.payload && typeof r.payload === 'object' && r.payload.id) ? r.payload : {
+                id: r.id,
+                name: r.name,
+                phone: r.phone,
+                whatsapp: r.phone,
+                locality: r.locality || 'Lucknow',
+                address: r.address || '',
+                brand: r.brand || 'Other / Not Specified',
+                serviceType: r.service_type || 'RO General Service',
+                status: r.status || 'New Lead',
+                bookingDate: r.created_at ? r.created_at.split('T')[0] : new Date().toISOString().split('T')[0],
+                technician: r.assigned_to || 'Ashwani Tiwari',
+                revenue: parseFloat(r.revenue) || 199,
+                amountPaid: 0,
+                paymentStatus: 'Pending',
+                notes: r.notes || '',
+                leadSource: r.source || 'Website Booking'
+              };
+              currentLeads.unshift(reconstructed);
+              updated = true;
+            }
+          });
+          if (updated) {
+            saveLeads(currentLeads, true);
+            notifyTabs('leads');
+          }
+        }
+      }
+
+      const reviewsRes = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/reviews?order=created_at.desc&limit=50`, {
+        headers: {
+          'apikey': SUPABASE_CONFIG.anonKey,
+          'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
+        }
+      });
+      if (reviewsRes.ok) {
+        const revRows = await reviewsRes.json();
+        if (Array.isArray(revRows) && revRows.length > 0) {
+          const currentReviews = getReviews();
+          const currentRevIds = new Set(currentReviews.map(r => r.id));
+          let revUpdated = false;
+          revRows.forEach(r => {
+            if (!currentRevIds.has(r.id)) {
+              const revObj = (r.payload && typeof r.payload === 'object' && r.payload.id) ? r.payload : {
+                id: r.id,
+                name: r.author,
+                locality: r.locality,
+                rating: r.rating,
+                serviceTag: r.service_used,
+                text: r.review_text,
+                createdAt: r.created_at ? r.created_at.split('T')[0] : new Date().toISOString().split('T')[0],
+                source: r.source
+              };
+              currentReviews.unshift(revObj);
+              revUpdated = true;
+            }
+          });
+          if (revUpdated) {
+            saveReviews(currentReviews, true);
+            notifyTabs('reviews');
+          }
+        }
+      }
+      return true;
+    } catch (e) {
+      console.warn('Supabase sync skipped:', e);
+      return false;
+    }
+  }
+
   function notifyTabs(kind) {
     try {
       if (syncChannel) syncChannel.postMessage({ type: 'purofix_sync', kind });
@@ -931,6 +1095,9 @@
     getCustomerLedger,
     getAnalyticsSummary,
     syncFromCloud,
+    syncFromSupabase,
+    pushLeadToSupabase,
+    pushReviewToSupabase,
     onSync,
     calculateReminderDate,
 
@@ -950,12 +1117,22 @@
       reviews.unshift(newReview);
       saveReviews(reviews, true);
       pushCloudEvent('new_review', { review: newReview });
+      pushReviewToSupabase(newReview);
       return newReview;
     },
 
     deleteReview: function (id) {
       const reviews = getReviews().filter(r => r.id !== id);
       saveReviews(reviews);
+      if (SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey) {
+        fetch(`${SUPABASE_CONFIG.url}/rest/v1/reviews?id=eq.${encodeURIComponent(id)}`, {
+          method: 'DELETE',
+          headers: {
+            'apikey': SUPABASE_CONFIG.anonKey,
+            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
+          }
+        }).catch(() => {});
+      }
       return true;
     },
 
@@ -1020,6 +1197,7 @@
       appendAuditLog('NEW_BOOKING', `${newLead.name} (${newLead.locality}) • ${newLead.serviceType} • ₹${newLead.revenue}`, newLead.id);
       dispatchEnquiryAlert(newLead, { markReadOnCreate: Boolean(leadData._manualAdmin) });
       pushCloudEvent('new_lead', { lead: newLead });
+      pushLeadToSupabase(newLead);
 
       return newLead;
     },
@@ -1062,6 +1240,7 @@
         `${updated.name} -> Status: ${updated.status}, Paid: ₹${paySummary.paid}/₹${paySummary.billed}`,
         updated.id
       );
+      pushLeadToSupabase(updated);
       return updated;
     },
 
@@ -1071,6 +1250,15 @@
       saveLeads(leads);
       if (existing) {
         appendAuditLog('DELETE_JOB', `Removed booking ${existing.id} (${existing.name})`, existing.id);
+      }
+      if (SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey) {
+        fetch(`${SUPABASE_CONFIG.url}/rest/v1/leads?id=eq.${encodeURIComponent(id)}`, {
+          method: 'DELETE',
+          headers: {
+            'apikey': SUPABASE_CONFIG.anonKey,
+            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
+          }
+        }).catch(() => {});
       }
       return true;
     },
@@ -1185,5 +1373,19 @@
       }
     }
   };
+
+  // Auto-sync with Supabase on startup and when connection is restored
+  if (typeof window !== 'undefined') {
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      syncFromSupabase();
+    } else {
+      window.addEventListener('DOMContentLoaded', () => {
+        syncFromSupabase();
+      });
+    }
+    window.addEventListener('online', () => {
+      syncFromSupabase();
+    });
+  }
 
 })();
