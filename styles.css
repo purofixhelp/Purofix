@@ -3767,7 +3767,7 @@ h1, h2, h3, h4 {
    -------------------------------------------------------------------------- */
 .floating-whatsapp-btn {
   position: fixed;
-  bottom: 84px;
+  bottom: 24px;
   right: 24px;
   z-index: 999;
   width: 58px;
@@ -7295,4 +7295,30 @@ html.js-proof-init .hero-proof-card .proof-number {
     width: 36px;
     height: 36px;
   }
+}
+
+/* --------------------------------------------------------------------------
+   NETLIFY BADGE & HUD ELIMINATION (100% UNBRANDED CLEAN PRODUCTION)
+   -------------------------------------------------------------------------- */
+#nl-badge-frame,
+#nl-hud-frame,
+iframe#nl-badge-frame,
+iframe#nl-hud-frame,
+iframe[title="Powered by Netlify"],
+iframe[title*="Netlify"],
+iframe[srcdoc*="Netlify"],
+iframe[id*="nl-badge"],
+iframe[id*="nl-hud"],
+script[data-nf-variant] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
+  z-index: -9999 !important;
+  clip-path: path("M0 0Z") !important;
 }
