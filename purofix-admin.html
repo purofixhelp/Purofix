@@ -161,19 +161,31 @@
               </div>
             </div>
           </div>
-          <span class="badge-tag" id="cloudSyncStatusBadge" style="background:#0f172a; color:#38bdf8; border:1px solid #1e3a68; padding:0.4rem 0.65rem;">● Local Live Sync</span>
-          <button class="btn btn-outline btn-sm" onclick="window.PurofixAdmin.syncCloudNow()" title="Pull latest bookings, reviews & settings">
-            <span>🔄 Sync Now</span>
+          <div class="topbar-sync-group">
+            <span class="live-sync-pill" id="cloudSyncStatusBadge">
+              <span class="live-dot"></span>
+              <span class="sync-text">Live Sync</span>
+            </span>
+            <button class="btn-icon-subtle" onclick="window.PurofixAdmin.syncCloudNow()" title="Pull latest bookings, reviews & settings">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+            </button>
+          </div>
+
+          <div class="topbar-utility-group">
+            <button class="btn-ghost-modern" onclick="window.PurofixCore.exportLeadsToCSV()" title="Export all leads to CSV">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Export</span>
+            </button>
+            <a href="https://wa.me/919250332918" target="_blank" rel="noopener" class="btn-ghost-modern whatsapp" title="Open Founder WhatsApp">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.311.045-.698.056-1.137-.082-.693-.217-1.579-.769-2.228-1.418-.865-.865-1.464-1.921-1.636-2.613-.172-.692.176-1.17.439-1.393.188-.16.417-.234.562-.234.144 0 .288.007.412.016.136.009.317-.052.495.375.188.455.642 1.568.699 1.684.057.116.096.252.019.405-.077.153-.115.248-.228.382-.113.134-.239.299-.342.402-.115.115-.235.24-.101.47.134.23.597.986 1.282 1.597.881.785 1.624 1.028 1.854 1.143.23.115.365.096.5-.058.135-.154.577-.673.731-.904.154-.23.308-.192.519-.115.212.077 1.344.634 1.574.749.23.115.384.173.442.27.058.096.058.558-.086.963z"/></svg>
+              <span>WhatsApp</span>
+            </a>
+          </div>
+
+          <button class="btn-primary-modern" onclick="window.PurofixAdmin.openAddLeadModal()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>+ Add Lead</span>
           </button>
-          <button class="btn btn-primary btn-sm" onclick="window.PurofixAdmin.openAddLeadModal()">
-            <span>+ Add Manual Lead</span>
-          </button>
-          <button class="btn btn-secondary btn-sm" onclick="window.PurofixCore.exportLeadsToCSV()">
-            <span>📥 Export CSV</span>
-          </button>
-          <a href="https://wa.me/919250332918" target="_blank" rel="noopener" class="btn btn-whatsapp btn-sm">
-            <span>WhatsApp Web</span>
-          </a>
         </div>
       </header>
 
@@ -871,6 +883,47 @@
                     <input type="file" id="restoreJsonInput" accept="application/json,.json" style="display:none;" onchange="window.PurofixAdmin.handleRestoreBackup(event)">
                   </label>
                 </div>
+              </div>
+            </div>
+
+            <!-- Cloudflare Custom Domain & SSL Management Card -->
+            <div class="domain-card full-width">
+              <div class="domain-status-row">
+                <div>
+                  <h3 style="font-size:1.2rem; font-weight:800; color:#ffffff; margin:0 0 0.35rem; display:flex; align-items:center; gap:0.5rem;">
+                    <span>🌐</span> Cloudflare Pages Custom Domain &amp; SSL Engine
+                  </h3>
+                  <p style="font-size:0.83rem; color:#cbd5e1; margin:0;">Zero cost custom domain mapping with lifetime automatic SSL, HTTP/3, and DDoS defense.</p>
+                </div>
+                <div class="domain-live-tag">
+                  <span class="live-dot" style="width:7px; height:7px; border-radius:50%; background:#22c55e;"></span>
+                  <span>Active Deployment: purofix.pages.dev</span>
+                </div>
+              </div>
+
+              <div class="domain-steps-grid">
+                <div class="domain-step-box">
+                  <span class="step-num">Step 1 • Purchase Domain</span>
+                  <h4>Get Domain Name</h4>
+                  <p>Buy <code>purofix.in</code> or <code>purofix.com</code> from GoDaddy, Namecheap, or Cloudflare Registrar.</p>
+                </div>
+                <div class="domain-step-box">
+                  <span class="step-num">Step 2 • Cloudflare Setup</span>
+                  <h4>Add to Cloudflare Pages</h4>
+                  <p>In Cloudflare Dashboard → <strong>Workers &amp; Pages</strong> → <strong>purofix</strong> → <strong>Custom domains</strong> tab → click <strong>Set up a custom domain</strong>.</p>
+                </div>
+                <div class="domain-step-box">
+                  <span class="step-num">Step 3 • Zero DNS Hassle</span>
+                  <h4>Automatic DNS &amp; Free SSL</h4>
+                  <p>Cloudflare configures CNAME to <code>purofix.pages.dev</code> and generates free HTTPS certificates automatically in 60 seconds.</p>
+                </div>
+              </div>
+
+              <div style="margin-top:1.25rem; display:flex; gap:0.75rem; flex-wrap:wrap; align-items:center;">
+                <a href="https://dash.cloudflare.com/f04f376aedf9a42133762ccd12e5b15d/workers-and-pages" target="_blank" rel="noopener" class="btn-primary-modern" style="text-decoration:none;">
+                  <span>Open Cloudflare Custom Domains ↗</span>
+                </a>
+                <span style="font-size:0.78rem; color:#94a3b8;">100% Free on Cloudflare Pages (No Pro plan required).</span>
               </div>
             </div>
 
